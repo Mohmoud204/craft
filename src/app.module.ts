@@ -9,7 +9,7 @@ import { join } from "path"
 import { WorkerModule } from './worker/worker.module';
 @Module({
   imports: [
-      MongooseModule.forRoot('mongodb+srv://mohmoud99:mohmoud99@cluster0.pcyhh7o.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
+      MongooseModule.forRoot('mongodb+srv://Mohmoud99:Mohmoud99@cluster0.d7zu7fg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
