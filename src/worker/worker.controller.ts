@@ -8,7 +8,7 @@ export class WorkerController {
   constructor(private readonly workerService: WorkerServicee) { }
 
   @Post()
-  SignWorker(@Body() createWorkerDto) {
+  SignWorker(@Body() createWorkerDto:CreateWorkerDto) {
     return this.workerService.SignWorker(createWorkerDto);
   }
 
