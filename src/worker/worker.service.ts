@@ -31,6 +31,7 @@ export class WorkerServicee {
   }
 
   async findWorker(craft_id): Promise<CreateWorkerDto[]> {
+    if (craft_id == "الكل") return await this.WorkerModel.find().populate("craft_id").exec()
     return await this.WorkerModel.find({ craft_id }).populate("craft_id").exec()
   }
 }
