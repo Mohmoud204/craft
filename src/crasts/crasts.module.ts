@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CrastsService } from './crasts.service';
-import { CrastsResolver } from './crasts.resolver';
+import { CrastsController } from './crasts.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Crafts, craftSchema } from "./Database/Crafts.db"
-
+import { Crafts, craftSchema } from "./entities/crast.entity"
 @Module({
   imports: [MongooseModule.forFeature([{ name: Crafts.name, schema: craftSchema }])],
-  providers: [CrastsResolver, CrastsService],
-  exports: []
+  controllers: [CrastsController],
+  providers: [CrastsService],
 })
 export class CrastsModule { }

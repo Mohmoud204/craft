@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { WorkerService } from './worker.service';
-import { WorkerResolver } from './worker.resolver';
+import { WorkerServicee } from './worker.service';
+import { WorkerController } from './worker.controller';
+import { Worker, WorkerSchema } from "./entities/worker.entity"
 import { MongooseModule } from '@nestjs/mongoose';
-import { Worker, WorkerSchema } from "./Database/Worker.db"
-
 @Module({
   imports: [MongooseModule.forFeature([{ name: Worker.name, schema: WorkerSchema }])],
-  providers: [WorkerResolver, WorkerService],
+  controllers: [WorkerController],
+  providers: [WorkerServicee],
 })
 export class WorkerModule { }
