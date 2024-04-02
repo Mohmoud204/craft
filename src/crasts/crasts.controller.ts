@@ -2,7 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { CrastsService } from './crasts.service';
 import { CreateCrastDto } from './dto/create-crast.dto';
 import { UpdateCrastDto } from './dto/update-crast.dto';
+import {  ApiTags } from '@nestjs/swagger';
 
+@ApiTags('crafts')
 @Controller('crafts')
 export class CrastsController {
   constructor(private readonly crastsService: CrastsService) { }

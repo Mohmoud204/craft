@@ -3,13 +3,34 @@ import {
   MaxLength, IsMobilePhone, IsOptional, Length, Matches, IsEnum, IsMongoId, IsUrl
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-/*********** email ************/
-export class Login_dto {
+
+export class img {
+  @ApiProperty()
+  @IsUrl()
+  avatar: string
+  img_id: string
+}
+
+
+export class CreateUserDto {
+  /*********** userName ************/
+  @ApiProperty()
+  @IsNotEmpty({ message: 'Username is required' })
+  @IsString({ message: 'Username must be a string' })
+  @MinLength(3, { message: 'Username must be at least 3 characters long' })
+  @MaxLength(15, { message: 'Username cannot be longer than 15 characters' })
+  @Matches(/^[^<>]*$/, { message: 'Username must not contain < or >' })
+  readonly username: string;
+
+
+  /*********** email ************/
   @ApiProperty()
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail({}, { message: 'Invalid email format' })
   @Matches(/^[^<>]*$/, { message: 'email must not contain < or >' })
   readonly email: string;
+
+
   /*********** password ************/
   @ApiProperty()
   @IsNotEmpty({ message: 'Password is required' })
@@ -21,4 +42,14 @@ export class Login_dto {
   })
   readonly password: string;
 
+  /*********** profile_picture ************/
+  @ApiProperty()
+  @IsOptional()
+  @IsString({ message: 'Profile picture must be a string' })
+  readonly profile_img: img
+
+  @ApiProperty()
+  @IsOptional()
+  @IsEnum(["admin", "user"])
+  role: string;
 }

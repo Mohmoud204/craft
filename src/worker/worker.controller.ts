@@ -5,12 +5,15 @@ import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { Login_dto } from './dto/login-worker.dto';
 import { Login } from "./interface/login.interface"
 import { WorkerGuard } from "./guard/guard.guard"
+import { ApiTags, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+@ApiTags('worker')
 @Controller('worker')
 export class WorkerController {
   constructor(private readonly workerService: WorkerServicee) { }
 
-
- // @UseGuards(WorkerGuard)
+  @ApiBearerAuth()
+  @ApiSecurity("Jwt-auth")
+  @UseGuards(WorkerGuard)
   @Get()
   findAll(): Promise<CreateWorkerDto[]> {
     return this.workerService.findAll();
@@ -34,9 +37,10 @@ export class WorkerController {
     return this.workerService.SignWorker(createWorkerDto);
   }
   @Post("/login")
-  loginWorker(@Body() createWorkerDto: Login_dto): Promise<Login> {
+  loginUser(@Body() createWorkerDto:CreateWorkerDto): Promise<Login> {
     return this.workerService.loginWorker(createWorkerDto);
   }
+  @ApiSecurity("Jwt-auth")
   @UseGuards(WorkerGuard)
   @Post("/Refresh_token")
   Refresh_token(@Req() request): Promise<{ access_token: string }> {

@@ -2,14 +2,16 @@ import {
   IsNotEmpty, IsString, IsEmail, IsBoolean, MinLength,
   MaxLength, IsMobilePhone, IsOptional, Length, Matches, IsEnum, IsMongoId, IsUrl
 } from 'class-validator';
-
+import { ApiProperty  } from '@nestjs/swagger';
 
 export class img {
+  @ApiProperty()
   @IsUrl()
   avatar: string
   img_id: string
 }
 export class img_worker {
+  @ApiProperty()
   @IsUrl()
   work_img: string
   img_id: string
@@ -18,6 +20,7 @@ export class img_worker {
 
 export class CreateWorkerDto {
   /*********** userName ************/
+  @ApiProperty()
   @IsNotEmpty({ message: 'Username is required' })
   @IsString({ message: 'Username must be a string' })
   @MinLength(3, { message: 'Username must be at least 3 characters long' })
@@ -27,12 +30,14 @@ export class CreateWorkerDto {
 
 
   /*********** email ************/
+  @ApiProperty()
   @IsNotEmpty({ message: 'Email is required' })
   @IsEmail({}, { message: 'Invalid email format' })
   @Matches(/^[^<>]*$/, { message: 'email must not contain < or >' })
   readonly email: string;
 
   /*********** address ************/
+  @ApiProperty()
   @IsNotEmpty({ message: 'Address is required' })
   @IsString({ message: 'Address must be a string' })
   @Matches(/^[^<>]*$/, { message: 'address must not contain < or >' })
@@ -45,6 +50,7 @@ export class CreateWorkerDto {
   readonly description: string;
 
   /*********** password ************/
+  @ApiProperty()
   @IsNotEmpty({ message: 'Password is required' })
   @IsString({ message: 'Password must be a string' })
   @MinLength(3, { message: 'the password very short' })
@@ -55,6 +61,7 @@ export class CreateWorkerDto {
   readonly password: string;
 
   /*********** phone mobile ************/
+  @ApiProperty()
   @IsMobilePhone(
     'ar-EG',
     {},
@@ -65,23 +72,27 @@ export class CreateWorkerDto {
   phone: string;
   @IsOptional()
   /*********** profile_picture ************/
+  @ApiProperty()
   @IsString({ message: 'Profile picture must be a string' })
   readonly profile_img: img
 
   @IsOptional()
   /*********** work_pictures ************/
+  @ApiProperty()
   readonly work_imgs: img_worker[];
 
 
   /*********** Active ************/
+  @ApiProperty()
   @IsOptional()
   active: boolean;
 
+ @ApiProperty()
   @IsOptional()
-  @IsEnum(["admin", "no"])
+  @IsEnum(["admin", "user"])
   role: string;
-
+  @ApiProperty()
   @IsMongoId()
-   @IsNotEmpty({ message: 'craft_id is required' })
+  @IsNotEmpty({ message: 'craft_id is required' })
   craft_id: string;
 }
