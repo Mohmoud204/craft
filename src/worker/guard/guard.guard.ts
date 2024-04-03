@@ -6,16 +6,32 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-
+import { Role } from "./role.enum"
+import { ROLES_KEY } from "./guard.decorator"
+import { Reflector } from '@nestjs/core';
 @Injectable()
 export class WorkerGuard implements CanActivate {
-  constructor(private jwtService: JwtService) { }
+  constructor(
+    private jwtService: JwtService,
+    private reflector: Reflector
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
     const token = this.extractTokenFromHeader(request);
+
+
     if (!token) {
       throw new UnauthorizedException();
+    }
+
+    if (!requiredRoles) {
+
+      return true;
     }
     try {
       const payload = await this.jwtService.verifyAsync(
@@ -26,7 +42,10 @@ export class WorkerGuard implements CanActivate {
       );
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      request['worker'] = payload;
+      request['user'] = payload;
+      if (!requiredRoles.includes(request['user'].role)) {
+        throw new UnauthorizedException();
+      }
     } catch {
       throw new UnauthorizedException();
     }

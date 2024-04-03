@@ -8,11 +8,13 @@ import { ConfigModule } from '@nestjs/config';
 import { join } from "path"
 import { XSSMiddleware } from './xss.middleware';
 import { ClientModule } from './client/client.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 @Module({
   imports: [CrastsModule,
     WorkerModule, ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DATABASE_URL),
-    ClientModule
+    ClientModule,
+    DashboardModule
 
   ],
   controllers: [AppController],

@@ -7,5 +7,6 @@ import { Crafts, craftSchema } from "./entities/crast.entity"
   imports: [MongooseModule.forFeature([{ name: Crafts.name, schema: craftSchema }])],
   controllers: [CrastsController],
   providers: [CrastsService],
+  exports:[CrastsService]
 })
 export class CrastsModule { }

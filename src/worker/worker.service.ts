@@ -43,7 +43,7 @@ export class WorkerServicee {
     if (!found) throw new NotFoundException("Email already not exists...");
     const verify_password = await bcrypt.compare(password, found.password);
     if (!verify_password) throw new BadRequestException("Wrong email or wrong password");
-    const payload = { _id: found._id, email: found.email };
+    const payload = { _id: found._id, email: found.email, role: found.role };
     const access_token = await this.jwtService.signAsync(payload)
     const refresh_token = await this.jwtService.sign(payload, { expiresIn: '30d' })
 
