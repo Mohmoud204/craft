@@ -9,13 +9,17 @@ import { join } from "path"
 import { XSSMiddleware } from './xss.middleware';
 import { ClientModule } from './client/client.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { ImageWorkerModule } from './image-worker/image-worker.module';
+
+
 @Module({
   imports: [CrastsModule,
     WorkerModule, ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.DATABASE_URL),
     ClientModule,
-    DashboardModule
-
+    DashboardModule,
+    ImageWorkerModule,
+   
   ],
   controllers: [AppController],
   providers: [AppService],

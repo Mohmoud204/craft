@@ -1,12 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, Req } from '@nestjs/common';
+import {
+  Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Res, Req, UploadedFile,
+  UseInterceptors
+} from '@nestjs/common';
 import { WorkerServicee } from './worker.service';
 import { CreateWorkerDto } from './dto/create-worker.dto';
 import { UpdateWorkerDto } from './dto/update-worker.dto';
 import { Login_dto } from './dto/login-worker.dto';
 import { Login } from "./interface/login.interface"
 import { WorkerGuard } from "./guard/guard.guard"
-
+import { Express } from "express"
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
+import { Worker } from "./entities/worker.entity"
 @ApiTags('worker')
 @Controller('worker')
 export class WorkerController {
@@ -16,20 +21,16 @@ export class WorkerController {
   @ApiSecurity("Jwt-auth")
   @UseGuards(WorkerGuard)
   @Get()
-  findAll(): Promise<CreateWorkerDto[]> {
+  findAll(): Promise<Worker[]> {
     return this.workerService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') _id: string): Promise<CreateWorkerDto> {
+  findOne(@Param('id') _id: string): Promise<Worker> {
     return this.workerService.findOneId(_id);
   }
-  @Get('photo/:id')
-  photo(@Param('id') _id: string): Promise<CreateWorkerDto> {
-    return this.workerService.photo(_id);
-  }
   @Get("gets/worker/:craft")
-  async findWorker(@Param("craft") craft_id: string): Promise<CreateWorkerDto[]> {
+  async findWorker(@Param("craft") craft_id: string): Promise<Worker[]> {
     return this.workerService.findWorker(craft_id);
   }
 
@@ -47,5 +48,16 @@ export class WorkerController {
   Refresh_token(@Req() request): Promise<{ access_token: string }> {
     const { email, _id } = request['worker']
     return this.workerService.Refresh_token(email, _id);
+  }
+
+  @Post('upload/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadImage(@UploadedFile() file: Express.Multer.File, @Param('id') _id: string) {
+    return this.workerService.uploadFile(file,_id);
+  }
+  @Post('upload/Worker/:id')
+  @UseInterceptors(FileInterceptor('file'))
+  uploadWorker(@UploadedFile() file: Express.Multer.File, @Param('id') _id: string) {
+    return this.workerService.uploadWorkerFile(file,_id);
   }
 }

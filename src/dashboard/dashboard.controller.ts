@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards ,Req} from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { WorkerServicee } from ".././worker/worker.service"
 import { CrastsService } from ".././crasts/crasts.service"
@@ -7,9 +7,9 @@ import { Login_dto } from '.././worker/dto/login-worker.dto';
 import { ClientService } from ".././client/client.service"
 import { CreatedashbordDto } from "./dto/create_dashboard"
 import { ApiTags, ApiBearerAuth, ApiSecurity } from '@nestjs/swagger';
-import { WorkerGuard } from ".././worker/guard/guard.guard"
+import { WorkerGuard } from "./guard/guard.guard"
 import { Role } from "../worker/guard/role.enum"
-import { Roles } from "../worker/guard/guard.decorator"
+import { Roles } from "./guard/guard.decorator"
 @ApiTags('dashboard')
 
 @Controller('dashboard')
@@ -21,7 +21,7 @@ export class DashboardController {
     private readonly workerService: WorkerServicee
   ) { }
   @Roles(Role.Admin)
-@UseGuards(WorkerGuard)
+  @UseGuards(WorkerGuard)
   @Get()
   async dashboard(): Promise<any> {
     const findClientAll = await this.clientService.findAll()
@@ -35,7 +35,7 @@ export class DashboardController {
     }
   }
   @Roles(Role.Admin)
-@UseGuards(WorkerGuard)
+  @UseGuards(WorkerGuard)
   @Get("getAdmin")
   async GetAdmin(): Promise<CreatedashbordDto[]> {
     return await this.dashboardService.GetAdmin();

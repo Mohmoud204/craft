@@ -23,15 +23,17 @@ export class Worker extends Document {
   @Prop()
   description: string;
 
-  @Prop({ type: { avatar: String, img_id: String } })
-  profile_img: { avatar: string, img_id: string };
+  @Prop({ type: { avatar: String, img_id: { type: String, default: null } } })
+  profile_img: { avatar: string, img_id: string }
+  
+  
+  @Prop({ type: [{ work_img: String, img_id: { type: String, default: null } }] })
+  Worker_img: { work_img: string, img_id: string }[]
 
-  @Prop([{ work_img: String, img_id: String }])
-  work_imgs: { work_img: string, img_id: string }[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Crafts' })
   craft_id: string; // Reference to Craft schema
- 
+
 
   @Prop({ default: "user" })
   role: string

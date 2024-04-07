@@ -2,7 +2,7 @@ import {
   IsNotEmpty, IsString, IsEmail, IsBoolean, MinLength,
   MaxLength, IsMobilePhone, IsOptional, Length, Matches, IsEnum, IsMongoId, IsUrl
 } from 'class-validator';
-import { ApiProperty  } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class img {
   @ApiProperty()
@@ -10,12 +10,11 @@ export class img {
   avatar: string
   img_id: string
 }
-export class img_worker {
+export class imgWorker {
   @ApiProperty()
   @IsUrl()
   work_img: string
   img_id: string
-
 }
 
 export class CreateWorkerDto {
@@ -50,14 +49,16 @@ export class CreateWorkerDto {
   readonly description: string;
 
   /*********** password ************/
+  /*
   @ApiProperty()
   @IsNotEmpty({ message: 'Password is required' })
-  @IsString({ message: 'Password must be a string' })
-  @MinLength(3, { message: 'the password very short' })
-  @MaxLength(20, { message: 'the password very long' })
+  @IsString()
+  @MinLength(3)
+  @MaxLength(20)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[^<>]*[A-Za-z\d@$!%*?&]{8,}$/i, {
     message: 'Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)',
   })
+  */
   readonly password: string;
 
   /*********** phone mobile ************/
@@ -77,17 +78,14 @@ export class CreateWorkerDto {
   readonly profile_img: img
 
   @IsOptional()
-  /*********** work_pictures ************/
   @ApiProperty()
-  readonly work_imgs: img_worker[];
-
-
+  readonly Worker_img: imgWorker
   /*********** Active ************/
   @ApiProperty()
   @IsOptional()
   active: boolean;
 
- @ApiProperty()
+  @ApiProperty()
   @IsOptional()
   @IsEnum(["admin", "user"])
   role: string;

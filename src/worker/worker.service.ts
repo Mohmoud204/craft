@@ -8,29 +8,35 @@ import { Login_dto } from './dto/login-worker.dto';
 import { Login } from "./interface/login.interface"
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryResponse } from './cloudinary-response';
+import { Express } from "express"
+const streamifier = require('streamifier');
 @Injectable()
 export class WorkerServicee {
   constructor(@InjectModel(Worker.name) private WorkerModel: Model<Worker>,
+    //  private readonly cloudinaryService: CloudinaryService,
     private jwtService: JwtService
   ) { }
-  async findAll(): Promise<CreateWorkerDto[]> {
+  async findAll(): Promise<Worker[]> {
     return await this.WorkerModel.find().populate("craft_id").exec()
   }
-  async findOneId(_id): Promise<CreateWorkerDto> {
+  async findOneId(_id): Promise<Worker> {
     return await this.WorkerModel.findById(_id).populate("craft_name").exec()
   }
-  async findWorker(craft_id): Promise<CreateWorkerDto[]> {
+  async findWorker(craft_id): Promise<Worker[]> {
     if (craft_id == "الكل") return await this.WorkerModel.find().populate("craft_id").exec()
     return await this.WorkerModel.find({ craft_id }).populate("craft_id").exec()
   }
-  async SignWorker(createWorkerDto: CreateWorkerDto): Promise<CreateWorkerDto | any> {
-    const { password, username, email, phone, address, description, profile_img, work_imgs, active, role, craft_id } = createWorkerDto
+  async SignWorker(createWorkerDto: CreateWorkerDto): Promise<Worker | any> {
+    const { password, username, email, phone, address, description, active, role, craft_id } = createWorkerDto
     const found = await this.WorkerModel.findOne({ email })
-    if (found) throw new BadRequestException("Email already exists...");
+    if (found) throw new BadRequestException("Email already exists...")
+
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(password, saltOrRounds);
     const create = {
-      username, email, phone, address, description, profile_img, work_imgs, active, role, craft_id,
+      username, email, phone, address, description, active, role, craft_id,
       password: hash,
 
     }
@@ -62,16 +68,54 @@ export class WorkerServicee {
     const access_token = await this.jwtService.signAsync(payload)
     return { access_token }
   }
-  async photo(_id): Promise<CreateWorkerDto> {
-    const user = await this.WorkerModel.findById(_id).populate("craft_id").exec()
-    const imgs = user?.work_imgs
-    const img = imgs.map(item => {
-      if (item.img_id == "1") {
-        item.img_id = "1238654£46787543£334455"
-        item.work_img = "mohmoudhdghdgmhcgnhncggchchgnhghncgcggcmhhmcghcmghcg"
-      }
-    })
-    return user.save()
+
+  async uploadFile(file: Express.Multer.File, _id): Promise<CloudinaryResponse> {
+    const found = await this.WorkerModel.findById(_id).exec()
+    if (!found) throw new NotFoundException("id not found ")
+    if (found.profile_img.img_id !== null) {
+      await cloudinary.uploader.destroy(found.profile_img.img_id)
+    }
+    return new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream({ folder: "profile_img" },
+        (error, result) => {
+          if (error) return reject(error);
+          found.profile_img = {
+            avatar: result.secure_url,
+            img_id: result.public_id
+          }
+          found.save()
+          resolve(result);
+        },
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
   }
-}
+  async uploadWorkerFile(file: Express.Multer.File, _id): Promise<CloudinaryResponse> {
+    const found = await this.WorkerModel.findById(_id).exec()
+    if (!found) throw new NotFoundException("id not found ")
+    const arrayImg = found.Worker_img
+    return new Promise<CloudinaryResponse>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream({ folder: "worker_img" },
+        (error, result) => {
+          if (error) return reject(error);
+          const add = {
+            work_img: result.secure_url,
+            img_id: result.public_id
+          }
+          arrayImg.push(add)
+          found.save()
+          resolve(result);
+        },
+      );
+
+      streamifier.createReadStream(file.buffer).pipe(uploadStream);
+    });
+  }
+
+};
+      //secure_url
+      //public_id
+
+
 

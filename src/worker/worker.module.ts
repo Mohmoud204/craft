@@ -5,6 +5,7 @@ import { Worker, WorkerSchema } from "./entities/worker.entity"
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { WorkerProvider } from './worker';
 @Module({
   imports: [ConfigModule.forRoot(), MongooseModule.forFeature([{ name: Worker.name, schema: WorkerSchema }]),
   JwtModule.register({
@@ -14,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
   }),
   ],
   controllers: [WorkerController],
-  providers: [WorkerServicee],
-  exports:[WorkerServicee]
+  providers: [WorkerServicee, WorkerProvider],
+  exports: [WorkerServicee]
 })
 export class WorkerModule { }
